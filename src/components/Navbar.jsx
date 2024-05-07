@@ -19,11 +19,17 @@ const Navbar = ({ activeIndex }) => {
     },
     {
       label: 'Manutenções ',
-      icon: 'pi pi-cog'
+      icon: 'pi pi-cog',
+      command: () => {
+        activeIndex(3)
+      }
     },
     {
       label: 'Usuários',
-      icon: 'pi pi-users'
+      icon: 'pi pi-users',
+      command: () => {
+        activeIndex(4)
+      }
     }
   ]
 
