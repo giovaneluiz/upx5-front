@@ -1,4 +1,4 @@
-import { TabMenu } from "primereact/tabmenu";
+import { Menubar } from "primereact/menubar";
 
 // eslint-disable-next-line react/prop-types
 const Navbar = ({ activeIndex }) => {
@@ -15,7 +15,7 @@ const Navbar = ({ activeIndex }) => {
       icon: 'pi pi-star',
       command: () => {
         activeIndex(2)
-      }
+      },      
     },
     {
       label: 'Manutenções ',
@@ -35,7 +35,7 @@ const Navbar = ({ activeIndex }) => {
 
   return (
     <div className="card">
-      <TabMenu model={items} />
+      <Menubar model={items} />
     </div>
   )
 }
