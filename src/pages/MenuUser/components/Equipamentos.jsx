@@ -7,8 +7,8 @@ import { InputText } from 'primereact/inputtext'
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { Dialog } from 'primereact/dialog'
-import { ToggleButton } from 'primereact/togglebutton'
 import { Toast } from 'primereact/toast'
+import { Tag } from 'primereact/tag'
 
 const Equipamentos = () => {
   const [equip, setEquip] = useState([])
@@ -16,7 +16,6 @@ const Equipamentos = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
-  const [checked, setChecked] = useState(false)
   const toastRef = useRef(null)
 
   const onGlobalFilterChange = (e) => {
@@ -29,16 +28,27 @@ const Equipamentos = () => {
     setGlobalFilterValue(value)
   }
 
+  const showMessage = (severity => {
+    switch (severity) {
+      case 'success':
+        toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Equipamento cadastrado!', life: 3000 })
+        break;
+      case 'error':
+        toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir os dados, tente novamente mais tarde.' })
+        break;
+    }
+  })
+
   const renderHeader = () => {
     return (
       <>
-        <div className="flex justify-content-between">
-          <span className="p-input-icon-left">
-            <Button severity='primary' label='Novo Equipamento' icon="pi pi-plus" onClick={() => setVisible(true)} size="small"/>
+        <div className="flex justify-content-between align-items-center">
+          <span className="p-input-icon-left mr-1">
+            <Button severity='primary' tooltip='Novo Equipamento' icon="pi pi-plus" onClick={() => setVisible(true)} size="small" />
           </span>
           <IconField iconPosition="left">
             <InputIcon className="pi pi-search" />
-            <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Pesquisa" />
+            <InputText className='mr-1' value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Pesquisa" size='small' />
           </IconField>
         </div>
       </>
@@ -47,6 +57,34 @@ const Equipamentos = () => {
 
   const headerTable = renderHeader()
 
+  const acoesTemplate = (rowData) => {
+    return (
+      <div className='flex flex-start'>
+        <Button icon='pi pi-user-edit' severity='primary' rounded text tooltip='Editar' />
+        <Button
+          icon={rowData.status ? 'pi pi-ban' : 'pi pi-replay'}
+          severity={rowData.status ? 'danger' : 'secondary'}
+          rounded
+          text
+          tooltip={rowData.status ? 'Bloquear' : 'Ativar'}
+          onClick={() => showMessage('error')}
+        />
+      </div>
+    )
+  }
+
+  const statusTemplate = (rowData) => {
+    return (
+      <>
+        {rowData.status ? (
+          <Tag value='Ativo' severity='success' icon={'pi pi-check'} />
+        ) : (
+          <Tag value='Inativo' severity='danger' icon={'pi pi-ban'} />
+        )}
+      </>
+    )
+  }
+
   useEffect(() => {
     setEquip([{
       id: 1,
@@ -54,25 +92,21 @@ const Equipamentos = () => {
       data_instalacao: '01/02/2023',
       data_ult_manutencao: '25/01/2024',
       data_prox_manutencao: '25/01/2025',
-      status: 'Ativo'
+      status: true
     }, {
       id: 2,
       descricao: 'Equipamento 2',
       data_instalacao: '01/02/2023',
       data_ult_manutencao: '01/06/2023',
       data_prox_manutencao: '31/12/2023',
-      status: 'Desativado'
+      status: false
     }])
     setLoading(false)
   }, [])
 
-  const showMessage = () => {
-    toastRef.current.show({ severity: 'success', summary: 'Cadastro realizado com sucesso', detail: 'Tudo certo com o cadastro!', life: 3000 });
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-    showMessage()
+    showMessage('success')
     setVisible(false)
   }
 
@@ -98,11 +132,6 @@ const Equipamentos = () => {
                 <label htmlFor="equip">Próxima Manutenção</label>
                 <InputText id="equip" aria-describedby="username-help" type='date' />
               </div>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="equip">Ativo</label>
-                <ToggleButton onLabel="Ativo" offLabel="Desativado" onIcon="pi pi-check" offIcon="pi pi-times"
-                  checked={checked} onChange={(e) => setChecked(e.value)} />
-              </div>
             </div>
           </div>
 
@@ -117,18 +146,17 @@ const Equipamentos = () => {
   )
 
   return (
-    <div className="m-3">
+    <div>
       <h3>Cadastro de Equipamentos</h3>
       <NovoEquipamentoDialog />
       <Toast ref={toastRef} />
       <div className="card">
         <DataTable
           value={equip}
-          tableStyle={{ minWidth: '50rem' }}
           paginator
           size='small'
           rows={10}
-          dataKey='Cod_Usuario'
+          dataKey='id'
           header={headerTable}
           filters={filters}
           loading={loading}
@@ -140,7 +168,8 @@ const Equipamentos = () => {
           <Column field="data_instalacao" header="Dt. Instalação"></Column>
           <Column field="data_ult_manutencao" header="Ult. Manutenção"></Column>
           <Column field="data_prox_manutencao" header="Próx. Manutenção"></Column>
-          <Column field="status" header="Status"></Column>
+          <Column header="Status" body={statusTemplate}></Column>
+          <Column header="Ações" body={acoesTemplate}></Column>
         </DataTable>
       </div>
     </div>
