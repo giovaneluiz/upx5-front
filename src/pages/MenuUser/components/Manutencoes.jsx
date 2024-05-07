@@ -1,6 +1,6 @@
 const Manutencoes = () => {
   return (
-    <h1>Manutenções Index</h1>
+    <h3>Manutenções</h3>
   )
 }
 

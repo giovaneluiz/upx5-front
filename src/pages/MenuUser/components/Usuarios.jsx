@@ -1,6 +1,6 @@
 const Usuarios = () => {
   return (
-    <h1>Usuarios Index</h1>
+    <h3>Cadastro de Usuários</h3>
   )
 }
 

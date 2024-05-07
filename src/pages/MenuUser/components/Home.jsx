@@ -1,6 +1,14 @@
+import { useEffect, useState } from "react"
+
 const Home = () => {
+  const [usuario, setUsuario] = useState('')
+
+  useEffect(() => {
+    setUsuario('Administrador')
+  }, [])
+
   return (
-    <h1>Home Index</h1>
+    <h3>Olá, {usuario}</h3>
   )
 }
 
