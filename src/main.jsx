@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { PrimeReactProvider } from 'primereact/api';
 import Login from './pages/Login'
 import MenuUser from './pages/MenuUser';
+import PrintQrCode from './pages/MenuUser/components/PrintQrCode';
 
 import './index.css'
 import 'primeflex/primeflex.css'
@@ -18,6 +19,9 @@ const router = createBrowserRouter([
   },{
     path: '/menu',
     element: <MenuUser />
+  },{
+    path: '/print-qrcode/:uuid',
+    element: <PrintQrCode />
   }
 ])
 

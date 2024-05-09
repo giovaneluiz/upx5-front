@@ -9,9 +9,11 @@ import { InputIcon } from 'primereact/inputicon';
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
+import { Link } from 'react-router-dom'
 
 const Equipamentos = () => {
   const [equip, setEquip] = useState([])
+  const [datProxManu, setDatProxManu] = useState('')
   const [filters, setFilters] = useState({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } })
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [loading, setLoading] = useState(false)
@@ -61,6 +63,15 @@ const Equipamentos = () => {
     return (
       <div className='flex flex-start'>
         <Button icon='pi pi-user-edit' severity='primary' rounded text tooltip='Editar' />
+        <Link to={`/print-qrcode/${rowData.id}`} target='_blank'>
+          <Button
+            icon='pi pi-qrcode'
+            severity='help'
+            rounded
+            text
+            tooltip='Imprimir QRCode'
+          />
+        </Link>
         <Button
           icon={rowData.status ? 'pi pi-ban' : 'pi pi-replay'}
           severity={rowData.status ? 'danger' : 'secondary'}
@@ -87,14 +98,14 @@ const Equipamentos = () => {
 
   useEffect(() => {
     setEquip([{
-      id: 1,
+      id: '123e4567-e89b-12d3-a456-426614174000',
       descricao: 'Equipamento 1',
       data_instalacao: '01/02/2023',
       data_ult_manutencao: '25/01/2024',
       data_prox_manutencao: '25/01/2025',
       status: true
     }, {
-      id: 2,
+      id: '987e6543-e21b-98d3-b654-321987654321',
       descricao: 'Equipamento 2',
       data_instalacao: '01/02/2023',
       data_ult_manutencao: '01/06/2023',
@@ -125,12 +136,8 @@ const Equipamentos = () => {
                 <InputText id="equip" aria-describedby="username-help" type='date' />
               </div>
               <div className='flex flex-column gap-2'>
-                <label htmlFor="equip">Ultima Manutenção</label>
-                <InputText id="equip" aria-describedby="username-help" type='date' />
-              </div>
-              <div className='flex flex-column gap-2'>
                 <label htmlFor="equip">Próxima Manutenção</label>
-                <InputText id="equip" aria-describedby="username-help" type='date' />
+                <InputText value={datProxManu} id="equip" aria-describedby="username-help" type='date' onChange={(e) => setDatProxManu(e.target.value)} />
               </div>
             </div>
           </div>
@@ -163,7 +170,6 @@ const Equipamentos = () => {
           globalFilterFields={['descricao', 'data_instalacao', 'data_ult_manutencao', 'data_prox_manutencao', 'status']}
           emptyMessage='Nenhum resultado econtrado!'
         >
-          <Column field="id" header="ID"></Column>
           <Column field="descricao" header="Equipamento"></Column>
           <Column field="data_instalacao" header="Dt. Instalação"></Column>
           <Column field="data_ult_manutencao" header="Ult. Manutenção"></Column>

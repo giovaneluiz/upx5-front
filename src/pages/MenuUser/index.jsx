@@ -9,7 +9,7 @@ const MenuUser = () => {
   const [menu, setMenu] = useState(1)
 
   const components = {
-    1: <Home />,
+    1: <Home setMenu={setMenu}/>,
     2: <Equipamentos />,
     3: <Manutencoes />,
     4: <Usuarios />,
