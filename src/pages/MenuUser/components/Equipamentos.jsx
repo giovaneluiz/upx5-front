@@ -4,15 +4,17 @@ import { Column } from 'primereact/column'
 import { FilterMatchMode } from 'primereact/api'
 import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
+import { IconField } from 'primereact/iconfield'
+import { InputIcon } from 'primereact/inputicon'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
+import { InputTextarea } from 'primereact/inputtextarea'
 import { Link } from 'react-router-dom'
 
 const Equipamentos = () => {
   const [equip, setEquip] = useState([])
+  const [isntalacao, setInstalacao] = useState()
   const [datProxManu, setDatProxManu] = useState('')
   const [filters, setFilters] = useState({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } })
   const [globalFilterValue, setGlobalFilterValue] = useState('')
@@ -30,14 +32,21 @@ const Equipamentos = () => {
     setGlobalFilterValue(value)
   }
 
+  const handleDateChange = (event) => {
+    setInstalacao(event.target.value)
+    const selectedDate = new Date(event.target.value)
+    selectedDate.setDate(selectedDate.getDate() + 180)
+    setDatProxManu(selectedDate.toISOString().split('T')[0])
+  }
+
   const showMessage = (severity => {
     switch (severity) {
       case 'success':
         toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Equipamento cadastrado!', life: 3000 })
-        break;
+        break
       case 'error':
         toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir os dados, tente novamente mais tarde.' })
-        break;
+        break
     }
   })
 
@@ -121,42 +130,47 @@ const Equipamentos = () => {
     setVisible(false)
   }
 
-  const NovoEquipamentoDialog = () => (
-    <>
-      <Dialog header="Novo Equipamento" visible={visible} style={{ width: '60vw' }} onHide={() => setVisible(false)}>
+  return (
+    <div>
+      <h3>Cadastro de Equipamentos</h3>
+      <Toast ref={toastRef} />
+      <Dialog header="Novo Equipamento" visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
         <form onSubmit={(e) => handleSubmit(e)} >
           <div className='flex flex-column'>
             <div className='flex flex-column gap-2'>
-              <label htmlFor="equip">Descrição</label>
-              <InputText id="equip" aria-describedby="username-help" />
+              <label htmlFor="nome">Nome</label>
+              <InputText id="nome" aria-describedby="nome" />
             </div>
             <div className='flex gap-2 mt-3'>
               <div className='flex flex-column gap-2'>
+                <label htmlFor="serviceTag">Service Tag</label>
+                <InputText id="serviceTag" aria-describedby="serviceTag" type='text' />
+              </div>
+              <div className='flex flex-column gap-2'>
                 <label htmlFor="equip">Data de Instalação</label>
-                <InputText id="equip" aria-describedby="username-help" type='date' />
+                <InputText id="equip" aria-describedby="username-help" type='date' value={isntalacao} onChange={(e) => handleDateChange(e)} />
+              </div>
+              <div className='flex flex-column gap-2'>
+                <label htmlFor="equip">Local de Instalação</label>
+                <InputText id="equip" aria-describedby="username-help" type='text' />
               </div>
               <div className='flex flex-column gap-2'>
                 <label htmlFor="equip">Próxima Manutenção</label>
                 <InputText value={datProxManu} id="equip" aria-describedby="username-help" type='date' onChange={(e) => setDatProxManu(e.target.value)} />
               </div>
             </div>
+            <div className='flex flex-column gap-2 mt-3'>
+              <label htmlFor="descricao">Outras Informações</label>
+              <InputTextarea id="descricao" aria-describedby="nome" rows={2} />
+            </div>            
           </div>
 
           <div className='mt-5'>
             <Button label='Criar Acesso' severity='primary' className='mr-2' type='submit' />
-            <Button label='Cancelar' severity='secondary' text onClick={() => setVisible(false)} />
+            <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
           </div>
         </form>
       </Dialog >
-    </>
-
-  )
-
-  return (
-    <div>
-      <h3>Cadastro de Equipamentos</h3>
-      <NovoEquipamentoDialog />
-      <Toast ref={toastRef} />
       <div className="card">
         <DataTable
           value={equip}
