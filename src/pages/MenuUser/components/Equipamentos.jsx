@@ -162,11 +162,10 @@ const Equipamentos = () => {
             <div className='flex flex-column gap-2 mt-3'>
               <label htmlFor="descricao">Outras Informações</label>
               <InputTextarea id="descricao" aria-describedby="nome" rows={2} />
-            </div>            
+            </div>
           </div>
-
           <div className='mt-5'>
-            <Button label='Criar Acesso' severity='primary' className='mr-2' type='submit' />
+            <Button label='Salvar' severity='primary' className='mr-2' type='submit' />
             <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
           </div>
         </form>
