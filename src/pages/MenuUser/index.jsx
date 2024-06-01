@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import Equipamentos from './components/Equipamentos';
 import Home from './components/Home'
 import Manutencoes from './components/Manutencoes';
-import Usuarios from './components/Usuarios';
+import Users from './components/Usuarios';
 
 const MenuUser = () => {
   const [menu, setMenu] = useState(1)
@@ -12,7 +12,7 @@ const MenuUser = () => {
     1: <Home setMenu={setMenu}/>,
     2: <Equipamentos />,
     3: <Manutencoes />,
-    4: <Usuarios />,
+    4: <Users />,
   }
   return (
     <>
