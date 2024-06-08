@@ -6,16 +6,13 @@ import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
 import { IconField } from 'primereact/iconfield'
 import { InputIcon } from 'primereact/inputicon'
-import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
-import { InputTextarea } from 'primereact/inputtextarea'
 import { Link } from 'react-router-dom'
+import NovoEquipamento from './NovoEquipamento'
 
 const Equipamentos = () => {
-  const [equip, setEquip] = useState([])
-  const [isntalacao, setInstalacao] = useState()
-  const [datProxManu, setDatProxManu] = useState('')
+  const [equipaments, setEquipaments] = useState([])
   const [filters, setFilters] = useState({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } })
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [loading, setLoading] = useState(false)
@@ -31,24 +28,6 @@ const Equipamentos = () => {
     setFilters(_filters)
     setGlobalFilterValue(value)
   }
-
-  const handleDateChange = (event) => {
-    setInstalacao(event.target.value)
-    const selectedDate = new Date(event.target.value)
-    selectedDate.setDate(selectedDate.getDate() + 180)
-    setDatProxManu(selectedDate.toISOString().split('T')[0])
-  }
-
-  const showMessage = (severity => {
-    switch (severity) {
-      case 'success':
-        toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Equipamento cadastrado!', life: 3000 })
-        break
-      case 'error':
-        toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir os dados, tente novamente mais tarde.' })
-        break
-    }
-  })
 
   const renderHeader = () => {
     return (
@@ -67,6 +46,20 @@ const Equipamentos = () => {
   }
 
   const headerTable = renderHeader()
+  
+  const showMessage = ((severity, field) => {
+    switch (severity) {
+      case 'success':
+        toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Equipamento cadastrado!', life: 3000 })
+        break
+      case 'error':
+        toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir os dados, tente novamente mais tarde.' })
+        break
+      case 'warn':
+        toastRef.current.show({ severity: 'warn', summary: 'Alerta!', detail: `Campo ${field} obrigatório!` })
+        break
+    }
+  })
 
   const acoesTemplate = (rowData) => {
     return (
@@ -86,7 +79,7 @@ const Equipamentos = () => {
           severity={rowData.status ? 'danger' : 'secondary'}
           rounded
           text
-          tooltip={rowData.status ? 'Bloquear' : 'Ativar'}
+          tooltip={rowData.status ? 'Desativar' : 'Ativar'}
           onClick={() => showMessage('error')}
         />
       </div>
@@ -106,9 +99,10 @@ const Equipamentos = () => {
   }
 
   useEffect(() => {
-    setEquip([{
+    setEquipaments([{
       id: '123e4567-e89b-12d3-a456-426614174000',
       descricao: 'Equipamento 1',
+      localizacao: 'Area 01',
       data_instalacao: '01/02/2023',
       data_ult_manutencao: '25/01/2024',
       data_prox_manutencao: '25/01/2025',
@@ -116,6 +110,7 @@ const Equipamentos = () => {
     }, {
       id: '987e6543-e21b-98d3-b654-321987654321',
       descricao: 'Equipamento 2',
+      localizacao: 'Area 02',
       data_instalacao: '01/02/2023',
       data_ult_manutencao: '01/06/2023',
       data_prox_manutencao: '31/12/2023',
@@ -124,55 +119,14 @@ const Equipamentos = () => {
     setLoading(false)
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    showMessage('success')
-    setVisible(false)
-  }
-
   return (
     <div>
       <h3>Cadastro de Equipamentos</h3>
       <Toast ref={toastRef} />
-      <Dialog header="Novo Equipamento" visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
-        <form onSubmit={(e) => handleSubmit(e)} >
-          <div className='flex flex-column'>
-            <div className='flex flex-column gap-2'>
-              <label htmlFor="nome">Nome</label>
-              <InputText id="nome" aria-describedby="nome" />
-            </div>
-            <div className='flex gap-2 mt-3'>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="serviceTag">Service Tag</label>
-                <InputText id="serviceTag" aria-describedby="serviceTag" type='text' />
-              </div>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="equip">Data de Instalação</label>
-                <InputText id="equip" aria-describedby="username-help" type='date' value={isntalacao} onChange={(e) => handleDateChange(e)} />
-              </div>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="equip">Local de Instalação</label>
-                <InputText id="equip" aria-describedby="username-help" type='text' />
-              </div>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="equip">Próxima Manutenção</label>
-                <InputText value={datProxManu} id="equip" aria-describedby="username-help" type='date' onChange={(e) => setDatProxManu(e.target.value)} />
-              </div>
-            </div>
-            <div className='flex flex-column gap-2 mt-3'>
-              <label htmlFor="descricao">Outras Informações</label>
-              <InputTextarea id="descricao" aria-describedby="nome" rows={2} />
-            </div>
-          </div>
-          <div className='mt-5'>
-            <Button label='Salvar' severity='primary' className='mr-2' type='submit' />
-            <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
-          </div>
-        </form>
-      </Dialog >
+      <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible}/>
       <div className="card">
         <DataTable
-          value={equip}
+          value={equipaments}
           paginator
           size='small'
           rows={10}
@@ -180,10 +134,11 @@ const Equipamentos = () => {
           header={headerTable}
           filters={filters}
           loading={loading}
-          globalFilterFields={['descricao', 'data_instalacao', 'data_ult_manutencao', 'data_prox_manutencao', 'status']}
+          globalFilterFields={['descricao', 'localizacao', 'status']}
           emptyMessage='Nenhum resultado econtrado!'
         >
           <Column field="descricao" header="Equipamento"></Column>
+          <Column field="localizacao" header="Localização"></Column>
           <Column field="data_instalacao" header="Dt. Instalação"></Column>
           <Column field="data_ult_manutencao" header="Ult. Manutenção"></Column>
           <Column field="data_prox_manutencao" header="Próx. Manutenção"></Column>
