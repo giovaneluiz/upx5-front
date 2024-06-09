@@ -13,6 +13,7 @@ import { Tag } from 'primereact/tag'
 import { getUserAll } from '../../../api/services'
 import { Messages } from 'primereact/messages'
 import { InputMask } from 'primereact/inputmask'
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 
 const defaultUser = {
   name: '',
@@ -29,6 +30,7 @@ const Users = () => {
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const [titleDialog, setTitleDialog] = useState('Novo Usuário')
+  const [iptPassWords, setIptPassWords] = useState(true)
 
   const toastRef = useRef(null)
   const msgRef = useRef(null)
@@ -59,6 +61,42 @@ const Users = () => {
     }
   })
 
+  const accept = () => {
+    toastRef.current.show({ severity: 'info', summary: 'Confirmado', life: 3000 })
+  }
+
+  const reject = () => {
+    toastRef.current.show({ severity: 'warn', summary: 'Cancelado', detail: 'Operação cancelada pelo usuário.', life: 3000 })
+  }
+
+  const confirm1 = () => {
+    confirmDialog({
+      message: 'Tem certeza que deseja desbloquear o acesso do usuário?',
+      header: 'Confirmação de Desbloqueio',
+      icon: 'pi pi-exclamation-triangule',
+      defaultFocus: 'reject',
+      acceptClassName: 'p-button-danger',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept,
+      reject
+    })
+  }
+
+  const confirm2 = () => {
+    confirmDialog({
+      message: 'Tem certeza que deseja bloquear o usuário?',
+      header: 'Confirmação de Bloqueio',
+      icon: 'pi pi-info-circle',
+      defaultFocus: 'reject',
+      acceptClassName: 'p-button-danger',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept,
+      reject
+    })
+  }
+
   const renderHeader = () => {
     return (
       <>
@@ -76,17 +114,18 @@ const Users = () => {
   }
 
   const headerTable = renderHeader()
-  
-  const showNewDialog = () => {    
+
+  const showNewDialog = () => {
     setUserData(defaultUser)
     setTitleDialog('Criar Novo Usuário')
     setVisible(true)
   }
 
-  const showEditDialog = (id) => {    
-    const resUserData = users.filter((user) => user.id === id)    
+  const showEditDialog = (id) => {
+    const resUserData = users.filter((user) => user.id === id)
     setUserData(resUserData[0])
     setTitleDialog('Editar Usuário')
+    setIptPassWords(false)
     setVisible(true)
   }
 
@@ -107,6 +146,7 @@ const Users = () => {
           rounded
           text
           tooltip={rowData.status ? 'Bloquear' : 'Ativar'}
+          onClick={rowData.status ? confirm2 : confirm1}
         />
       </div>
     )
@@ -213,6 +253,7 @@ const Users = () => {
     <div>
       <h3>Cadastro de Usuários</h3>
       <Toast ref={toastRef} />
+      <ConfirmDialog />
       <Dialog visible={visible} style={{ minWidth: '48vw' }} closable={false}>
         <h3>{titleDialog}</h3>
         <Messages ref={msgRef} />
@@ -227,26 +268,34 @@ const Users = () => {
                 <label htmlFor="cpf">CPF/Acesso*</label>
                 <InputMask id="cpf" name='cpf' value={userData.cpf} onChange={handleChange} mask="999.999.999-99" placeholder='999.999.999-99' ref={cpfRef} />
               </div>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="password">Senha*</label>
-                <InputText id="password" name='password' aria-describedby="password" value={userData.password} type='password' onChange={handleChange} ref={passwordRef} />
-              </div>
-              <div className='flex flex-column gap-2'>
-                <label htmlFor="confirmPassword">Confirma Senha*</label>
-                <InputText id="confirmPassword"
-                  name='confirmPassword'
-                  aria-describedby="confirmPassword"
-                  value={userData.confirmPassword}
-                  type='password'
-                  onChange={handleChange}
-                  ref={confirmPasswordRef}
-                />
-              </div>
+              {iptPassWords && (
+                <>
+                  <div className='flex flex-column gap-2'>
+                    <label htmlFor="password">Senha*</label>
+                    <InputText id="password" name='password' aria-describedby="password" value={userData.password} type='password' onChange={handleChange} ref={passwordRef} />
+                  </div>
+                  <div className='flex flex-column gap-2'>
+                    <label htmlFor="confirmPassword">Confirma Senha*</label>
+                    <InputText id="confirmPassword"
+                      name='confirmPassword'
+                      aria-describedby="confirmPassword"
+                      value={userData.confirmPassword}
+                      type='password'
+                      onChange={handleChange}
+                      ref={confirmPasswordRef} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <span className='mt-2'>(*) campos obrigatórios</span>
           <div className='mt-5'>
             <Button label='Salvar' severity='primary' className='mr-2' type='submit' />
+            {!iptPassWords && (
+              <>
+                <Button label='Redefinir Senha' severity="warning" text type='button' onClick={() => setIptPassWords(true)} />
+              </>
+            )}
             <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
           </div>
         </form>
