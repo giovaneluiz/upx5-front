@@ -11,13 +11,16 @@ import { Tag } from 'primereact/tag'
 import { Link } from 'react-router-dom'
 import NovoEquipamento from './NovoEquipamento'
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
+import EditaEquipamento from './EditaEquipamento'
 
 const Equipamentos = () => {
   const [equipaments, setEquipaments] = useState([])
+  const [equipmentEdit, setEquipmentEdit] = useState([])
   const [filters, setFilters] = useState({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } })
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [edit, setEdit] = useState(false)
   const toastRef = useRef(null)
 
   const onGlobalFilterChange = (e) => {
@@ -82,11 +85,11 @@ const Equipamentos = () => {
   }
 
   const headerTable = renderHeader()
-  
+
   const showMessage = ((severity, field) => {
     switch (severity) {
       case 'success':
-        toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Equipamento cadastrado!', life: 3000 })
+        toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Equipamento salvo!', life: 3000 })
         break
       case 'error':
         toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir os dados, tente novamente mais tarde.' })
@@ -97,17 +100,30 @@ const Equipamentos = () => {
     }
   })
 
+  const showEditDialog = (id) => {
+    const resEquipmentData = equipaments.filter((equip) => equip.id === id)    
+    setEquipmentEdit(resEquipmentData[0])
+    setEdit(true)
+  }
+
   const acoesTemplate = (rowData) => {
     return (
       <div className='flex flex-start'>
-        <Button icon='pi pi-user-edit' severity='primary' rounded text tooltip='Editar' />
+        <Button
+          icon='pi pi-pen-to-square'
+          severity='primary'
+          rounded
+          text
+          tooltip='Editar'
+          onClick={() => showEditDialog(rowData.id)}
+        />
         <Link to={`/print-qrcode/${rowData.id}`} target='_blank'>
           <Button
             icon='pi pi-qrcode'
             severity='help'
             rounded
             text
-            tooltip='Imprimir QRCode'
+            tooltip='Imprimir QRCode'            
           />
         </Link>
         <Button
@@ -139,17 +155,17 @@ const Equipamentos = () => {
       id: '123e4567-e89b-12d3-a456-426614174000',
       descricao: 'Equipamento 1',
       localizacao: 'Area 01',
-      data_instalacao: '01/02/2023',
-      data_ult_manutencao: '25/01/2024',
-      data_prox_manutencao: '25/01/2025',
+      data_instalacao: '2023-02-01',
+      data_ult_manutencao: '2023-02-01',
+      data_prox_manutencao: '2023-02-01',
       status: true
     }, {
       id: '987e6543-e21b-98d3-b654-321987654321',
       descricao: 'Equipamento 2',
       localizacao: 'Area 02',
-      data_instalacao: '01/02/2023',
-      data_ult_manutencao: '01/06/2023',
-      data_prox_manutencao: '31/12/2023',
+      data_instalacao: '2023-02-01',
+      data_ult_manutencao: '2023-02-23',
+      data_prox_manutencao: '2023-02-23',
       status: false
     }])
     setLoading(false)
@@ -160,7 +176,8 @@ const Equipamentos = () => {
       <h3>Cadastro de Equipamentos</h3>
       <Toast ref={toastRef} />
       <ConfirmDialog />
-      <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible}/>
+      <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible} />
+      <EditaEquipamento showMessage={showMessage} visible={edit} setVisible={setEdit} equipData={equipmentEdit}/>
       <div className="card">
         <DataTable
           value={equipaments}
