@@ -5,16 +5,17 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Messages } from 'primereact/messages';
 import { useRef, useState } from 'react'
 
+const defaultEquipment = {
+  descricao: '',
+  serviceTag: '',
+  data_instalacao: '',
+  localizacao: '',
+  data_prox_manutencao: '',
+  observacoes: ''
+}
 // eslint-disable-next-line react/prop-types
 const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
-  const [newEquipament, setNewEquipament] = useState({
-    descricao: '',
-    serviceTag: '',
-    data_instalacao: '',
-    localizacao: '',
-    data_prox_manutencao: '',
-    observacoes: ''
-  })
+  const [newEquipament, setNewEquipament] = useState(defaultEquipment)
   const msgRef = useRef(null)  
 
   const handleChange = (e) => {
@@ -58,14 +59,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
 
     showMessage('success')
     setVisible(false)
-    setNewEquipament({
-      descricao: '',
-      serviceTag: '',
-      data_instalacao: '',
-      localizacao: '',
-      data_prox_manutencao: '',
-      observacoes: ''
-    })
+    setNewEquipament(defaultEquipment)
   }
 
   return (
