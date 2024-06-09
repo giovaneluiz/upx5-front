@@ -14,18 +14,22 @@ import { getUserAll } from '../../../api/services'
 import { Messages } from 'primereact/messages'
 import { InputMask } from 'primereact/inputmask'
 
+const defaultUser = {
+  name: '',
+  cpf: '',
+  password: '',
+  confirmPassword: ''
+}
+
 const Users = () => {
   const [users, setUsers] = useState([])
-  const [newUserData, setNewUserData] = useState({
-    name: '',
-    cpf: '',
-    password: '',
-    confirmPassword: ''
-  })
+  const [userData, setUserData] = useState(defaultUser)
   const [filters, setFilters] = useState({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } })
   const [globalFilterValue, setGlobalFilterValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [titleDialog, setTitleDialog] = useState('Novo Usuário')
+
   const toastRef = useRef(null)
   const msgRef = useRef(null)
   const nameRef = useRef(null)
@@ -60,7 +64,7 @@ const Users = () => {
       <>
         <div className="flex justify-content-between align-items-center">
           <span className="p-input-icon-left mr-1">
-            <Button severity='primary' tooltip='Novo Usuário' icon="pi pi-plus" onClick={() => setVisible(true)} size="small" />
+            <Button severity='primary' tooltip='Novo Usuário' icon="pi pi-plus" onClick={() => showNewDialog()} size="small" />
           </span>
           <IconField iconPosition="left">
             <InputIcon className="pi pi-search" />
@@ -72,18 +76,37 @@ const Users = () => {
   }
 
   const headerTable = renderHeader()
+  
+  const showNewDialog = () => {    
+    setUserData(defaultUser)
+    setTitleDialog('Criar Novo Usuário')
+    setVisible(true)
+  }
+
+  const showEditDialog = (id) => {    
+    const resUserData = users.filter((user) => user.id === id)    
+    setUserData(resUserData[0])
+    setTitleDialog('Editar Usuário')
+    setVisible(true)
+  }
 
   const acoesTemplate = (rowData) => {
     return (
       <div className='flex flex-start'>
-        <Button icon='pi pi-user-edit' severity='primary' rounded text tooltip='Editar' />
+        <Button
+          icon='pi pi-user-edit'
+          severity='primary'
+          rounded
+          text
+          tooltip='Editar'
+          onClick={() => showEditDialog(rowData.id)}
+        />
         <Button
           icon={rowData.status ? 'pi pi-ban' : 'pi pi-replay'}
           severity={rowData.status ? 'danger' : 'secondary'}
           rounded
           text
           tooltip={rowData.status ? 'Bloquear' : 'Ativar'}
-          onClick={() => showMessage('error')}
         />
       </div>
     )
@@ -138,42 +161,42 @@ const Users = () => {
   }, [])
 
   const handleChange = (e) => {
-    setNewUserData({
-      ...newUserData,
+    setUserData({
+      ...userData,
       [e.target.name]: e.target.value
     })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (newUserData.name === '') {
+    if (userData.name === '') {
       showFieldError('Nome')
       nameRef.current.focus()
       return
     }
 
-    if (newUserData.cpf === '') {
+    if (userData.cpf === '') {
       showFieldError('CPF')
       cpfRef.current.focus()
       return
     }
 
-    if (newUserData.password === '') {
+    if (userData.password === '') {
       showFieldError('Senha')
       passwordRef.current.focus()
       return
     }
 
-    if (newUserData.confirmPassword === '') {
+    if (userData.confirmPassword === '') {
       showFieldError('Confirma Senha')
       confirmPasswordRef.current.focus()
       return
     }
 
-    if (newUserData.password !== newUserData.confirmPassword) {
+    if (userData.password !== userData.confirmPassword) {
       msgRef.current.show({ sticky: false, life: 3000, severity: 'error', summary: `As senhas não conferem!`, closable: true })
-      setNewUserData({
-        ...newUserData,
+      setUserData({
+        ...userData,
         password: '',
         confirmPassword: ''
       })
@@ -183,41 +206,37 @@ const Users = () => {
 
     showMessage('success')
     setVisible(false)
-    setNewUserData({
-      name: '',
-      cpf: '',
-      password: '',
-      confirmPassword: ''
-    })
+    setUserData(defaultUser)
   }
 
   return (
     <div>
       <h3>Cadastro de Usuários</h3>
       <Toast ref={toastRef} />
-      <Dialog header="Novo Usuário" visible={visible} style={{ minWidth: '48vw' }} onHide={() => setVisible(false)}>
+      <Dialog visible={visible} style={{ minWidth: '48vw' }} closable={false}>
+        <h3>{titleDialog}</h3>
         <Messages ref={msgRef} />
         <form onSubmit={(e) => handleSubmit(e)} >
           <div className='flex flex-column'>
             <div className='flex flex-column gap-2'>
               <label htmlFor="name">Nome*</label>
-              <InputText id="name" name='name' aria-describedby="name" value={newUserData.name} onChange={handleChange} ref={nameRef} />
+              <InputText id="name" name='name' aria-describedby="name" value={userData.name} onChange={handleChange} ref={nameRef} />
             </div>
             <div className='flex gap-2 mt-3'>
               <div className='flex flex-column gap-2'>
                 <label htmlFor="cpf">CPF/Acesso*</label>
-                <InputMask id="cpf" name='cpf' value={newUserData.cpf} onChange={handleChange} mask="999.999.999-99" placeholder='999.999.999-99' ref={cpfRef} />
+                <InputMask id="cpf" name='cpf' value={userData.cpf} onChange={handleChange} mask="999.999.999-99" placeholder='999.999.999-99' ref={cpfRef} />
               </div>
               <div className='flex flex-column gap-2'>
                 <label htmlFor="password">Senha*</label>
-                <InputText id="password" name='password' aria-describedby="password" value={newUserData.password} type='password' onChange={handleChange} ref={passwordRef} />
+                <InputText id="password" name='password' aria-describedby="password" value={userData.password} type='password' onChange={handleChange} ref={passwordRef} />
               </div>
               <div className='flex flex-column gap-2'>
                 <label htmlFor="confirmPassword">Confirma Senha*</label>
                 <InputText id="confirmPassword"
                   name='confirmPassword'
                   aria-describedby="confirmPassword"
-                  value={newUserData.confirmPassword}
+                  value={userData.confirmPassword}
                   type='password'
                   onChange={handleChange}
                   ref={confirmPasswordRef}
