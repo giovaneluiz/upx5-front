@@ -9,6 +9,8 @@ import { InputIcon } from 'primereact/inputicon'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
+// import { getUserAll } from '../../../api/services'
+import { Messages } from 'primereact/messages'
 
 const Users = () => {
   const [users, setUsers] = useState([])
@@ -23,6 +25,7 @@ const Users = () => {
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const toastRef = useRef(null)
+  const msgRef = useRef(null)
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value
@@ -91,6 +94,16 @@ const Users = () => {
     )
   }
 
+  const showFieldError = (field) => {
+    msgRef.current.show({ sticky: false, life: 3000, severity: 'error', summary: `Campo **${field}** obrigatório`, closable: true })
+  }
+
+  // const loadData = async () => {
+  //   const users = await getUserAll()
+  //   console.log(users)
+  //   setUsers(users)
+  // }
+
   useEffect(() => {
     setUsers([{
       id: '123e4567-e89b-12d3-a456-426614174000',
@@ -107,6 +120,7 @@ const Users = () => {
       updateAt: '25/01/2025',
       status: false
     }])
+    // loadData()
     setLoading(false)
   }, [])
 
@@ -119,8 +133,44 @@ const Users = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (newUserData.name === '') {
+      showFieldError('Nome')      
+      return
+    }
+
+    if (newUserData.cpf === '') {
+      showFieldError('CPF')
+      return
+    }
+
+    if (newUserData.password === '') {
+      showFieldError('Senha')
+      return
+    }
+
+    if (newUserData.confirmPassword === '') {
+      showFieldError('Confirma Senha')
+      return
+    }
+
+    if (newUserData.password !== newUserData.confirmPassword) {
+      msgRef.current.show({ sticky: false, life: 3000, severity: 'error', summary: `As senhas não conferem!`, closable: true })
+      setNewUserData({
+        ...newUserData,
+        password: '',
+        confirmPassword: ''
+      })
+      return
+    }
+
     showMessage('success')
     setVisible(false)
+    setNewUserData({
+      name: '',
+      cpf: '',
+      password: '',
+      confirmPassword: ''
+    })
   }
 
   return (
@@ -128,6 +178,7 @@ const Users = () => {
       <h3>Cadastro de Usuários</h3>
       <Toast ref={toastRef} />
       <Dialog header="Novo Usuário" visible={visible} style={{ minWidth: '48vw' }} onHide={() => setVisible(false)}>
+        <Messages ref={msgRef} />
         <form onSubmit={(e) => handleSubmit(e)} >
           <div className='flex flex-column'>
             <div className='flex flex-column gap-2'>
@@ -141,11 +192,11 @@ const Users = () => {
               </div>
               <div className='flex flex-column gap-2'>
                 <label htmlFor="password">Senha</label>
-                <InputText id="password" name='password' aria-describedby="password" type='password' onChange={handleChange} />
+                <InputText id="password" name='password' aria-describedby="password" value={newUserData.password} type='password' onChange={handleChange} />
               </div>
               <div className='flex flex-column gap-2'>
-                <label htmlFor="passwordConfirm">Confirma Senha</label>
-                <InputText id="passwordConfirm" name='passwordConfirm' aria-describedby="passwordConfirm" type='password' onChange={handleChange} />
+                <label htmlFor="confirmPassword">Confirma Senha</label>
+                <InputText id="confirmPassword" name='confirmPassword' aria-describedby="confirmPassword" value={newUserData.confirmPassword} type='password' onChange={handleChange} />
               </div>
             </div>
           </div>
@@ -171,7 +222,6 @@ const Users = () => {
           <Column field="name" header="Nome"></Column>
           <Column field="cpf" header="CPF/Acesso"></Column>
           <Column field="createAt" header="Dat. Cadastro"></Column>
-          <Column field="updateAt" header="Ult. Atulização"></Column>
           <Column header="Status" body={statusTemplate}></Column>
           <Column header="Ações" body={acoesTemplate}></Column>
         </DataTable>

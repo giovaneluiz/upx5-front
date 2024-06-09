@@ -100,7 +100,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
             <InputTextarea id="descricao" aria-describedby="nome" rows={2} value={newEquipament.observacoes} name='observacoes' onChange={handleChange} />
           </div>
         </div>
-        <span className='mt-2'>* campos obrigatórios</span>
+        <span className='mt-2'>(*) campos obrigatórios</span>
         <div className='mt-5'>
           <Button label='Salvar' severity='primary' className='mr-2' type='submit' />
           <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
