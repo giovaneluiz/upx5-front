@@ -118,6 +118,7 @@ const Users = () => {
   const showNewDialog = () => {
     setUserData(defaultUser)
     setTitleDialog('Criar Novo Usuário')
+    setIptPassWords(true)
     setVisible(true)
   }
 
@@ -254,8 +255,7 @@ const Users = () => {
       <h3>Cadastro de Usuários</h3>
       <Toast ref={toastRef} />
       <ConfirmDialog />
-      <Dialog visible={visible} style={{ minWidth: '48vw' }} closable={false}>
-        <h3>{titleDialog}</h3>
+      <Dialog header={titleDialog} visible={visible} style={{ minWidth: '48vw' }} onHide={() => setVisible(false)}>        
         <Messages ref={msgRef} />
         <form onSubmit={(e) => handleSubmit(e)} >
           <div className='flex flex-column'>
