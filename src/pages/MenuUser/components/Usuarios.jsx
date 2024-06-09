@@ -197,7 +197,7 @@ const Users = () => {
       updateAt: '25/01/2025',
       status: false
     }])
-    // loadData()
+    loadData()
     setLoading(false)
   }, [])
 
