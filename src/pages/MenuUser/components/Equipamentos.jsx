@@ -10,6 +10,7 @@ import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
 import { Link } from 'react-router-dom'
 import NovoEquipamento from './NovoEquipamento'
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 
 const Equipamentos = () => {
   const [equipaments, setEquipaments] = useState([])
@@ -29,6 +30,41 @@ const Equipamentos = () => {
     setGlobalFilterValue(value)
   }
 
+  const accept = () => {
+    toastRef.current.show({ severity: 'info', summary: 'Confirmado', life: 3000 })
+  }
+
+  const reject = () => {
+    toastRef.current.show({ severity: 'warn', summary: 'Cancelado', detail: 'Operação cancelada pelo usuário.', life: 3000 })
+  }
+
+  const confirm1 = () => {
+    confirmDialog({
+      message: 'Tem certeza que deseja ativar o equipamento?',
+      header: 'Confirmação de Ativação',
+      icon: 'pi pi-exclamation-triangule',
+      defaultFocus: 'reject',
+      acceptClassName: 'p-button-danger',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept,
+      reject
+    })
+  }
+
+  const confirm2 = () => {
+    confirmDialog({
+      message: 'Tem certeza que deseja desativar o equipamento?',
+      header: 'Confirmação de Bloqueio',
+      icon: 'pi pi-info-circle',
+      defaultFocus: 'reject',
+      acceptClassName: 'p-button-danger',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
+      accept,
+      reject
+    })
+  }
   const renderHeader = () => {
     return (
       <>
@@ -80,7 +116,7 @@ const Equipamentos = () => {
           rounded
           text
           tooltip={rowData.status ? 'Desativar' : 'Ativar'}
-          onClick={() => showMessage('error')}
+          onClick={rowData.status ? confirm2 : confirm1}
         />
       </div>
     )
@@ -123,6 +159,7 @@ const Equipamentos = () => {
     <div>
       <h3>Cadastro de Equipamentos</h3>
       <Toast ref={toastRef} />
+      <ConfirmDialog />
       <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible}/>
       <div className="card">
         <DataTable
