@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -9,8 +10,9 @@ import { InputIcon } from 'primereact/inputicon'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
-// import { getUserAll } from '../../../api/services'
+import { getUserAll } from '../../../api/services'
 import { Messages } from 'primereact/messages'
+import { InputMask } from 'primereact/inputmask'
 
 const Users = () => {
   const [users, setUsers] = useState([])
@@ -26,6 +28,11 @@ const Users = () => {
   const [visible, setVisible] = useState(false)
   const toastRef = useRef(null)
   const msgRef = useRef(null)
+  const nameRef = useRef(null)
+  const cpfRef = useRef(null)
+  const passwordRef = useRef(null)
+  const confirmPasswordRef = useRef(null)
+
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value
@@ -43,7 +50,7 @@ const Users = () => {
         toastRef.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Usuário Cadastrado!', life: 3000 })
         break
       case 'error':
-        toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Erro ao inserir os dados, tente novamente mais tarde.' })
+        toastRef.current.show({ severity: 'error', summary: 'Erro!', detail: 'Falha na conexão com o servidor! Tente novamente mais tarde.' })
         break
     }
   })
@@ -98,13 +105,19 @@ const Users = () => {
     msgRef.current.show({ sticky: false, life: 3000, severity: 'error', summary: `Campo **${field}** obrigatório`, closable: true })
   }
 
-  // const loadData = async () => {
-  //   const users = await getUserAll()
-  //   console.log(users)
-  //   setUsers(users)
-  // }
+  // eslint-disable-next-line no-unused-vars
+  const loadData = async () => {
+    const users = await getUserAll()
+    console.log(users)
+    if (!users) {
+      showMessage('error')
+      return
+    }
+    setUsers(users)
+  }
 
   useEffect(() => {
+    setLoading(true)
     setUsers([{
       id: '123e4567-e89b-12d3-a456-426614174000',
       name: 'Usuário 1',
@@ -134,22 +147,26 @@ const Users = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (newUserData.name === '') {
-      showFieldError('Nome')      
+      showFieldError('Nome')
+      nameRef.current.focus()
       return
     }
 
     if (newUserData.cpf === '') {
       showFieldError('CPF')
+      cpfRef.current.focus()
       return
     }
 
     if (newUserData.password === '') {
       showFieldError('Senha')
+      passwordRef.current.focus()
       return
     }
 
     if (newUserData.confirmPassword === '') {
       showFieldError('Confirma Senha')
+      confirmPasswordRef.current.focus()
       return
     }
 
@@ -160,6 +177,7 @@ const Users = () => {
         password: '',
         confirmPassword: ''
       })
+      passwordRef.current.focus()
       return
     }
 
@@ -182,24 +200,32 @@ const Users = () => {
         <form onSubmit={(e) => handleSubmit(e)} >
           <div className='flex flex-column'>
             <div className='flex flex-column gap-2'>
-              <label htmlFor="name">Nome</label>
-              <InputText id="name" name='name' aria-describedby="name" value={newUserData.name} onChange={handleChange} />
+              <label htmlFor="name">Nome*</label>
+              <InputText id="name" name='name' aria-describedby="name" value={newUserData.name} onChange={handleChange} ref={nameRef} />
             </div>
             <div className='flex gap-2 mt-3'>
               <div className='flex flex-column gap-2'>
-                <label htmlFor="cpf">CPF/Acesso</label>
-                <InputText id="cpf" name='cpf' aria-describedby="cpf" type='text' value={newUserData.cpf} onChange={handleChange} />
+                <label htmlFor="cpf">CPF/Acesso*</label>
+                <InputMask id="cpf" name='cpf' value={newUserData.cpf} onChange={handleChange} mask="999.999.999-99" placeholder='999.999.999-99' ref={cpfRef} />
               </div>
               <div className='flex flex-column gap-2'>
-                <label htmlFor="password">Senha</label>
-                <InputText id="password" name='password' aria-describedby="password" value={newUserData.password} type='password' onChange={handleChange} />
+                <label htmlFor="password">Senha*</label>
+                <InputText id="password" name='password' aria-describedby="password" value={newUserData.password} type='password' onChange={handleChange} ref={passwordRef} />
               </div>
               <div className='flex flex-column gap-2'>
-                <label htmlFor="confirmPassword">Confirma Senha</label>
-                <InputText id="confirmPassword" name='confirmPassword' aria-describedby="confirmPassword" value={newUserData.confirmPassword} type='password' onChange={handleChange} />
+                <label htmlFor="confirmPassword">Confirma Senha*</label>
+                <InputText id="confirmPassword"
+                  name='confirmPassword'
+                  aria-describedby="confirmPassword"
+                  value={newUserData.confirmPassword}
+                  type='password'
+                  onChange={handleChange}
+                  ref={confirmPasswordRef}
+                />
               </div>
             </div>
           </div>
+          <span className='mt-2'>(*) campos obrigatórios</span>
           <div className='mt-5'>
             <Button label='Salvar' severity='primary' className='mr-2' type='submit' />
             <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
