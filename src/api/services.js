@@ -1,10 +1,8 @@
 import axios from 'axios'
 
-const BASEURL = import.meta.env.BASE_URL_UPX5
-
 export const getUserAll = async () => {
   try {      
-    const res = await axios.get(`${BASEURL}/user`, {
+    const res = await axios.get(`${process.env.BASE_URL_UPX5}/user`, {
       headers: {
       'Content-Type': 'application/json'
       }
