@@ -10,14 +10,14 @@ import { InputIcon } from 'primereact/inputicon'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { Tag } from 'primereact/tag'
-import { getUserAll } from '../../../api/services'
+import { getUserAll, insertUser } from '../../../api/services'
 import { Messages } from 'primereact/messages'
 import { InputMask } from 'primereact/inputmask'
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 
 const defaultUser = {
   name: '',
-  cpf: '',
+  CPF: '',
   password: '',
   confirmPassword: ''
 }
@@ -165,40 +165,51 @@ const Users = () => {
     )
   }
 
+  const cpfTemplate = (rowData) => {
+    return (
+      rowData.CPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+    )
+  }
+
+  function dataTemplate(rowData) {
+    const date = new Date(rowData.created_at);
+    return (
+      date.toLocaleDateString('pt-BR')
+    )
+  }
+
   const showFieldError = (field) => {
     msgRef.current.show({ sticky: false, life: 3000, severity: 'error', summary: `Campo **${field}** obrigatório`, closable: true })
   }
 
-  // eslint-disable-next-line no-unused-vars
   const loadData = async () => {
+    setLoading(true)
     const users = await getUserAll()
-    console.log(users)
     if (!users) {
       showMessage('error')
       return
     }
     setUsers(users)
+    setLoading(false)
   }
 
-  useEffect(() => {
+  const insertData = async () => {
+    const user = await insertUser(userData)
+    console.log(user)
+    if (!user) {
+      showMessage('error')
+      return
+    }
+    setVisible(false)
+    setUserData(defaultUser)
+    showMessage('success', user.name)
     setLoading(true)
-    setUsers([{
-      id: '123e4567-e89b-12d3-a456-426614174000',
-      name: 'Usuário 1',
-      cpf: '111.111.111-11',
-      createAt: '25/01/2024',
-      updateAt: '25/01/2025',
-      status: true
-    }, {
-      id: '987e6543-e21b-98d3-b654-321987654321',
-      name: 'Usuário 2',
-      cpf: '222.222.222-22',
-      createAt: '25/01/2024',
-      updateAt: '25/01/2025',
-      status: false
-    }])
-    loadData()
+    await loadData()
     setLoading(false)
+  }
+
+  useEffect(() => {    
+    loadData()    
   }, [])
 
   const handleChange = (e) => {
@@ -244,10 +255,7 @@ const Users = () => {
       passwordRef.current.focus()
       return
     }
-
-    showMessage('success')
-    setVisible(false)
-    setUserData(defaultUser)
+    insertData()
   }
 
   return (
@@ -255,7 +263,7 @@ const Users = () => {
       <h3>Cadastro de Usuários</h3>
       <Toast ref={toastRef} />
       <ConfirmDialog />
-      <Dialog header={titleDialog} visible={visible} style={{ minWidth: '48vw' }} onHide={() => setVisible(false)}>        
+      <Dialog header={titleDialog} visible={visible} style={{ minWidth: '48vw' }} onHide={() => setVisible(false)}>
         <Messages ref={msgRef} />
         <form onSubmit={(e) => handleSubmit(e)} >
           <div className='flex flex-column'>
@@ -266,7 +274,7 @@ const Users = () => {
             <div className='flex gap-2 mt-3'>
               <div className='flex flex-column gap-2'>
                 <label htmlFor="cpf">CPF/Acesso*</label>
-                <InputMask id="cpf" name='cpf' value={userData.cpf} onChange={handleChange} mask="999.999.999-99" placeholder='999.999.999-99' ref={cpfRef} />
+                <InputMask id="cpf" name='cpf' value={userData.CPF} onChange={handleChange} mask="999.999.999-99" placeholder='999.999.999-99' ref={cpfRef} />
               </div>
               {iptPassWords && (
                 <>
@@ -305,18 +313,20 @@ const Users = () => {
           value={users}
           paginator
           size='small'
-          rows={10}
+          rows={5}
           dataKey='id'
           header={headerTable}
           filters={filters}
           loading={loading}
-          globalFilterFields={['name', 'cpf']}
-          emptyMessage='Nenhum resultado econtrado!'
+          globalFilterFields={['name', 'CPF']}
+          emptyMessage='Nenhum resultado econtrado!' 
+          sortField='created_at'          
+          sortOrder={1}
         >
-          <Column field="name" header="Nome"></Column>
-          <Column field="cpf" header="CPF/Acesso"></Column>
-          <Column field="createAt" header="Dat. Cadastro"></Column>
-          <Column header="Status" body={statusTemplate}></Column>
+          <Column field="name" sortable header="Nome"></Column>
+          <Column field="CPF" header="CPF/Acesso" body={cpfTemplate}></Column>
+          <Column field="created_at" sortable header="Dat. Cadastro" body={dataTemplate}></Column>
+          <Column header="Status" sortable body={statusTemplate}></Column>
           <Column header="Ações" body={acoesTemplate}></Column>
         </DataTable>
       </div>
