@@ -1,10 +1,11 @@
 import axios from 'axios'
+import { env } from '../../env'
 
 export const getUserAll = async () => {
   try {      
-    const res = await axios.get(`${process.env.BASE_URL_UPX5}/user`, {
+    const res = await axios.get(`${env.BASE_URL_UPX5}/user`, {
       headers: {
-      'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       }
     })        
     if (res) {
