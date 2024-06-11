@@ -9,7 +9,8 @@ import PrintQrCode from './pages/MenuUser/components/PrintQrCode';
 import './index.css'
 import 'primeflex/primeflex.css'
 import 'primereact/resources/primereact.min.css'
-import "primereact/resources/themes/lara-light-cyan/theme.css";
+// import "primereact/resources/themes/arya-blue/theme.css";
+import "primereact/resources/themes/lara-light-blue/theme.css";
 import 'primeicons/primeicons.css';
 
 const router = createBrowserRouter([
