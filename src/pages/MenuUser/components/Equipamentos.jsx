@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 import NovoEquipamento from './NovoEquipamento'
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 import EditaEquipamento from './EditaEquipamento'
-import { getEquipments } from '../../../api/services'
+import { getEquipments, updateStatusEquipment } from '../../../api/services'
 
 const Equipamentos = () => {
   const [equipaments, setEquipaments] = useState([])
@@ -34,7 +34,24 @@ const Equipamentos = () => {
     setGlobalFilterValue(value)
   }
 
-  const accept = () => {
+  const listEquipments = async () => {
+    setLoading(true)
+    const res = await getEquipments()
+    if (!res) {
+      showMessage('error')
+    }
+    setEquipaments(res)
+    setLoading(false)
+  }
+
+  const accept = async (rowData) => {
+    setLoading(true)    
+    const res = await updateStatusEquipment(rowData)
+    if (!res) {
+      toastRef.current.show({ severity: 'error', summary: 'Erro ao atualizar cadastro!', life: 3000 })
+      return
+    }
+    listEquipments()    
     toastRef.current.show({ severity: 'info', summary: 'Confirmado', life: 3000 })
   }
 
@@ -42,30 +59,30 @@ const Equipamentos = () => {
     toastRef.current.show({ severity: 'warn', summary: 'Cancelado', detail: 'Operação cancelada pelo usuário.', life: 3000 })
   }
 
-  const confirm1 = () => {
+  const confirm1 = (rowData) => {
     confirmDialog({
-      message: 'Tem certeza que deseja ativar o equipamento?',
+      message: `Tem certeza que deseja ativar o equipamento **${rowData.name}**?`,
       header: 'Confirmação de Ativação',
       icon: 'pi pi-exclamation-triangule',
       defaultFocus: 'reject',
       acceptClassName: 'p-button-danger',
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
-      accept,
+      accept: () => accept(rowData),
       reject
     })
   }
 
-  const confirm2 = () => {
+  const confirm2 = (rowData) => {    
     confirmDialog({
-      message: 'Tem certeza que deseja desativar o equipamento?',
+      message: `Tem certeza que deseja desativar o equipamento **${rowData.name}**?`,
       header: 'Confirmação de Bloqueio',
       icon: 'pi pi-info-circle',
       defaultFocus: 'reject',
       acceptClassName: 'p-button-danger',
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
-      accept,
+      accept: () => accept(rowData),
       reject
     })
   }
@@ -134,7 +151,13 @@ const Equipamentos = () => {
           rounded
           text
           tooltip={rowData.status ? 'Desativar' : 'Ativar'}
-          onClick={rowData.status ? confirm2 : confirm1}
+          onClick={() => {
+            if (rowData.status) {
+              confirm2(rowData)
+            } else {
+              confirm1(rowData)
+            }
+          }}
         />
       </div>
     )
@@ -179,20 +202,9 @@ const Equipamentos = () => {
     }
   }
 
-  const listEquipments = async () => {
-    setLoading(true)
-    const res = await getEquipments()
-    if (!res) {
-      showMessage('error')
-    }
-    setEquipaments(res)
-    setLoading(false)
-  }
-
-
-
   useEffect(() => {
     listEquipments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -201,7 +213,9 @@ const Equipamentos = () => {
       <Toast ref={toastRef} />
       <ConfirmDialog />
       <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible} load={listEquipments} />
-      <EditaEquipamento showMessage={showMessage} visible={edit} setVisible={setEdit} equipData={equipmentEdit} />
+      {edit === true && (
+        <EditaEquipamento showMessage={showMessage} visible={edit} setVisible={setEdit} equipData={equipmentEdit} load={listEquipments} />
+      )}
       <div className="card">
         <DataTable
           value={equipaments}
@@ -214,7 +228,7 @@ const Equipamentos = () => {
           loading={loading}
           globalFilterFields={['name', 'location', 'status']}
           emptyMessage='Nenhum resultado econtrado!'
-          sortField='nextManutentionDate'
+          sortField='current_at'
           sortOrder={-1}
         >
           <Column field="name" sortable header="Equipamento"></Column>

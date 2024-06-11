@@ -59,3 +59,46 @@ export const insertEquipament = async (equipment) => {
     return null
   }
 }
+
+export const updateEquipament = async (equipment) => {
+  try {
+    const res = await axios.put(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
+      name: equipment.name,
+      description: equipment.description,
+      lastManutentionDate: equipment.lastManutentionDate,
+      nextManutentionDate: new Date(equipment.nextManutentionDate),
+      currentInstallationDate: new Date(equipment.currentInstallationDate),
+      location: equipment.location,
+      serialNumber: equipment.serialNumber,
+      status: equipment.status
+    })
+    if (res) {
+      return res.status === 200 ? res.data : null
+    }
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+
+export const updateStatusEquipment = async (equipment) => {
+  try {
+    const res = await axios.put(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
+      name: equipment.name,
+      description: equipment.description,
+      lastManutentionDate: equipment.lastManutentionDate,
+      nextManutentionDate: new Date(equipment.nextManutentionDate),
+      currentInstallationDate: new Date(equipment.currentInstallationDate),
+      location: equipment.location,
+      serialNumber: equipment.serialNumber,
+      status: equipment.status === false ? true : false
+    })
+    if (res) {
+      return res.status === 200 ? res.data : null
+    }
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}

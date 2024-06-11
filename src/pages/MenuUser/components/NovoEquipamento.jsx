@@ -106,7 +106,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
           </div>
           <div className='flex flex-column gap-2 mt-3'>
             <label htmlFor="descricao">Outras Informações</label>
-            <InputTextarea id="descricao" aria-describedby="nome" rows={2} value={newEquipament.observacoes} name='observacoes' onChange={handleChange} />
+            <InputTextarea id="descricao" aria-describedby="nome" rows={2} value={newEquipament.description} name='description' onChange={handleChange} />
           </div>
         </div>
         <span className='mt-2'>(*) campos obrigatórios</span>
