@@ -52,7 +52,7 @@ const Login = () => {
   }
   return (
     <div className="flex justify-content-between h-screen">
-      <div className="bg-blue-100 w-full flex justify-content-center align-items-center">
+      <div className="w-full flex justify-content-center align-items-center">
         <Card title="Login">
           <form action="#" onSubmit={handleSubmit}>
             <div className="flex flex-column">
