@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 import NovoEquipamento from './NovoEquipamento'
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 import EditaEquipamento from './EditaEquipamento'
+import { getEquipments } from '../../../api/services'
 
 const Equipamentos = () => {
   const [equipaments, setEquipaments] = useState([])
@@ -68,6 +69,7 @@ const Equipamentos = () => {
       reject
     })
   }
+
   const renderHeader = () => {
     return (
       <>
@@ -101,7 +103,7 @@ const Equipamentos = () => {
   })
 
   const showEditDialog = (id) => {
-    const resEquipmentData = equipaments.filter((equip) => equip.id === id)    
+    const resEquipmentData = equipaments.filter((equip) => equip.id === id)
     setEquipmentEdit(resEquipmentData[0])
     setEdit(true)
   }
@@ -123,7 +125,7 @@ const Equipamentos = () => {
             severity='help'
             rounded
             text
-            tooltip='Imprimir QRCode'            
+            tooltip='Imprimir QRCode'
           />
         </Link>
         <Button
@@ -150,25 +152,47 @@ const Equipamentos = () => {
     )
   }
 
-  useEffect(() => {
-    setEquipaments([{
-      id: '123e4567-e89b-12d3-a456-426614174000',
-      descricao: 'Equipamento 1',
-      localizacao: 'Area 01',
-      data_instalacao: '2023-02-01',
-      data_ult_manutencao: '2023-02-01',
-      data_prox_manutencao: '2023-02-01',
-      status: true
-    }, {
-      id: '987e6543-e21b-98d3-b654-321987654321',
-      descricao: 'Equipamento 2',
-      localizacao: 'Area 02',
-      data_instalacao: '2023-02-01',
-      data_ult_manutencao: '2023-02-23',
-      data_prox_manutencao: '2023-02-23',
-      status: false
-    }])
+  const currentInstallationDateTemplate = (rowData) => {
+    if (rowData.currentInstallationDate) {
+      const date = new Date(rowData.currentInstallationDate)
+      return (
+        date.toLocaleDateString('pt-BR')
+      )
+    }
+  }
+
+  const nextManutentionDateTemplate = (rowData) => {
+    if (rowData.nextManutentionDate) {
+      const date = new Date(rowData.nextManutentionDate)
+      return (
+        date.toLocaleDateString('pt-BR')
+      )
+    }
+  }
+
+  const lastManutentionDateTemplate = (rowData) => {
+    if (rowData.lastManutentionDate) {
+      const date = new Date(rowData.lastManutentionDate)
+      return (
+        date.toLocaleDateString('pt-BR')
+      )
+    }
+  }
+
+  const listEquipments = async () => {
+    setLoading(true)
+    const res = await getEquipments()
+    if (!res) {
+      showMessage('error')
+    }
+    setEquipaments(res)
     setLoading(false)
+  }
+
+
+
+  useEffect(() => {
+    listEquipments()
   }, [])
 
   return (
@@ -176,8 +200,8 @@ const Equipamentos = () => {
       <h3>Cadastro de Equipamentos</h3>
       <Toast ref={toastRef} />
       <ConfirmDialog />
-      <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible} />
-      <EditaEquipamento showMessage={showMessage} visible={edit} setVisible={setEdit} equipData={equipmentEdit}/>
+      <NovoEquipamento showMessage={showMessage} visible={visible} setVisible={setVisible} load={listEquipments} />
+      <EditaEquipamento showMessage={showMessage} visible={edit} setVisible={setEdit} equipData={equipmentEdit} />
       <div className="card">
         <DataTable
           value={equipaments}
@@ -188,15 +212,17 @@ const Equipamentos = () => {
           header={headerTable}
           filters={filters}
           loading={loading}
-          globalFilterFields={['descricao', 'localizacao', 'status']}
+          globalFilterFields={['name', 'location', 'status']}
           emptyMessage='Nenhum resultado econtrado!'
+          sortField='nextManutentionDate'
+          sortOrder={-1}
         >
-          <Column field="descricao" header="Equipamento"></Column>
-          <Column field="localizacao" header="Localização"></Column>
-          <Column field="data_instalacao" header="Dt. Instalação"></Column>
-          <Column field="data_ult_manutencao" header="Ult. Manutenção"></Column>
-          <Column field="data_prox_manutencao" header="Próx. Manutenção"></Column>
-          <Column header="Status" body={statusTemplate}></Column>
+          <Column field="name" sortable header="Equipamento"></Column>
+          <Column field="location" sortable header="Localização"></Column>
+          <Column field="currentInstallationDate" sortable header="Dt. Instalação" body={currentInstallationDateTemplate}></Column>
+          <Column field="lastManutentionDate" sortable header="Ult. Manutenção" body={lastManutentionDateTemplate}></Column>
+          <Column field="nextManutentionDate" sortable header="Próx. Manutenção" body={nextManutentionDateTemplate}></Column>
+          <Column field="status" header="Status" sortable body={statusTemplate}></Column>
           <Column header="Ações" body={acoesTemplate}></Column>
         </DataTable>
       </div>

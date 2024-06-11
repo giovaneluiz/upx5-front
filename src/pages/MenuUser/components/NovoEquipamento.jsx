@@ -4,19 +4,21 @@ import { InputText } from 'primereact/inputtext'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { Messages } from 'primereact/messages';
 import { useRef, useState } from 'react'
+import { insertEquipament } from '../../../api/services';
 
 const defaultEquipment = {
-  descricao: '',
-  serviceTag: '',
-  data_instalacao: '',
-  localizacao: '',
-  data_prox_manutencao: '',
-  observacoes: ''
+  name: '',
+  status: '',
+  nextManutentionDate: '',
+  currentInstallationDate: '',
+  location: '',
+  serialNumber: '',
 }
+
 // eslint-disable-next-line react/prop-types
-const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
+const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
   const [newEquipament, setNewEquipament] = useState(defaultEquipment)
-  const msgRef = useRef(null)  
+  const msgRef = useRef(null)
 
   const handleChange = (e) => {
     setNewEquipament({
@@ -30,8 +32,8 @@ const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
     selectedDate.setDate(selectedDate.getDate() + 180)
     setNewEquipament({
       ...newEquipament,
-      data_instalacao: e.target.value,
-      data_prox_manutencao: selectedDate.toISOString().split('T')[0]
+      currentInstallationDate: e.target.value,
+      nextManutentionDate: selectedDate.toISOString().split('T')[0]
     })
   }
 
@@ -40,26 +42,32 @@ const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()    
-    
-    if (newEquipament.descricao === '') {
+    e.preventDefault()
+
+    if (newEquipament.name === '') {
       showFieldError('Nome')
       return
     }
 
-    if (newEquipament.data_instalacao === '') {
+    if (newEquipament.currentInstallationDate === '') {
       showFieldError('Data de Instalação')
       return
     }
 
-    if (newEquipament.localizacao === '') {
+    if (newEquipament.location === '') {
       showFieldError('Localização')
       return
     }
 
+    const equipment = await insertEquipament(newEquipament)
+    if (!equipment) {
+      showMessage('error')
+      return
+    }
     showMessage('success')
     setVisible(false)
     setNewEquipament(defaultEquipment)
+    load()
   }
 
   return (
@@ -69,24 +77,31 @@ const NovoEquipamento = ({ showMessage, visible, setVisible }) => {
         <div className='flex flex-column'>
           <div className='flex flex-column gap-2'>
             <label htmlFor="nome">Nome*</label>
-            <InputText id="nome" aria-describedby="nome" value={newEquipament.descricao} onChange={e => handleChange(e)} name='descricao' />
+            <InputText id="nome" aria-describedby="nome" value={newEquipament.name} onChange={e => handleChange(e)} name='name' />
           </div>
           <div className='flex gap-2 mt-3'>
             <div className='flex flex-column gap-2'>
               <label htmlFor="serviceTag">Service Tag</label>
-              <InputText id="serviceTag" aria-describedby="serviceTag" type='text' value={newEquipament.serviceTag} name='serviceTag' onChange={handleChange} />
+              <InputText id="serviceTag" aria-describedby="serviceTag" type='text' value={newEquipament.serialNumber} name='serialNumber' onChange={handleChange} />
             </div>
             <div className='flex flex-column gap-2'>
               <label htmlFor="equip">Data de Instalação*</label>
-              <InputText id="equip" aria-describedby="username-help" type='date' value={newEquipament.data_instalacao} onChange={(e) => handleDateChange(e)} />
+              <InputText id="equip" aria-describedby="username-help" type='date' value={newEquipament.currentInstallationDate} onChange={(e) => handleDateChange(e)} name='currentInstallationDate' />
             </div>
             <div className='flex flex-column gap-2'>
               <label htmlFor="equip">Local de Instalação*</label>
-              <InputText id="equip" aria-describedby="username-help" type='text' name='localizacao' value={newEquipament.localizacao} onChange={handleChange} />
+              <InputText id="equip" aria-describedby="username-help" type='text' name='location' value={newEquipament.location} onChange={handleChange} />
             </div>
             <div className='flex flex-column gap-2'>
               <label htmlFor="equip">Próxima Manutenção*</label>
-              <InputText value={newEquipament.data_prox_manutencao} id="equip" aria-describedby="username-help" type='date' onChange={(e) => setNewEquipament({ ...newEquipament, data_prox_manutencao: e.target.value })} />
+              <InputText
+                value={newEquipament.nextManutentionDate}
+                id="equip"
+                aria-describedby="username-help"
+                type='date'
+                onChange={(e) => setNewEquipament({ ...newEquipament, nextManutentionDate: e.target.value })}
+                name='nextManutentionDate'
+              />
             </div>
           </div>
           <div className='flex flex-column gap-2 mt-3'>

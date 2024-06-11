@@ -171,7 +171,7 @@ const Users = () => {
     )
   }
 
-  function dataTemplate(rowData) {
+  const dataTemplate = (rowData) => {
     const date = new Date(rowData.created_at);
     return (
       date.toLocaleDateString('pt-BR')
