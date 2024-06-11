@@ -308,7 +308,7 @@ const Users = () => {
           </div>
         </form>
       </Dialog >
-      <div className="card">
+      <div>
         <DataTable
           value={users}
           paginator
@@ -321,7 +321,7 @@ const Users = () => {
           globalFilterFields={['name', 'CPF']}
           emptyMessage='Nenhum resultado econtrado!' 
           sortField='created_at'          
-          sortOrder={1}
+          sortOrder={-1}
         >
           <Column field="name" sortable header="Nome"></Column>
           <Column field="CPF" header="CPF/Acesso" body={cpfTemplate}></Column>
