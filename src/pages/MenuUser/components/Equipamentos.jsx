@@ -51,7 +51,7 @@ const Equipamentos = () => {
       toastRef.current.show({ severity: 'error', summary: 'Erro ao atualizar cadastro!', life: 3000 })
       return
     }
-    listEquipments()    
+    await listEquipments()    
     toastRef.current.show({ severity: 'info', summary: 'Confirmado', life: 3000 })
   }
 

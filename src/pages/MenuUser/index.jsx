@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Equipamentos from './components/Equipamentos';
 import Home from './components/Home'
-import Manutencoes from './components/Manutencoes';
+import Manutencoes from '../Manutencoes/Manutencoes';
 import Users from './components/Usuarios';
 
 const MenuUser = () => {
