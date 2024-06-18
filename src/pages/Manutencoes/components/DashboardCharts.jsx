@@ -8,11 +8,11 @@ export const DashboardCharts = () => {
 
   useEffect(() => {
     const data = {
-      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      labels: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO'],
       datasets: [
         {
-          label: 'Sales',
-          data: [540, 325, 702, 620],
+          label: 'Manutenções',
+          data: [4, 2, 7, 3, 5, 6],
           backgroundColor: [
             'rgba(255, 159, 64, 0.2)',
             'rgba(75, 192, 192, 0.2)',
