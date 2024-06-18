@@ -221,7 +221,7 @@ const Equipamentos = () => {
           value={equipaments}
           paginator
           size='small'
-          rows={10}
+          rows={5}
           dataKey='id'
           header={headerTable}
           filters={filters}
