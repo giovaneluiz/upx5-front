@@ -13,6 +13,7 @@ import NovoEquipamento from './NovoEquipamento'
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 import EditaEquipamento from './EditaEquipamento'
 import { getEquipments, updateStatusEquipment } from '../../../api/services'
+import { dateValidator } from '../../../validators/date-validator'
 
 const Equipamentos = () => {
   const [equipaments, setEquipaments] = useState([])
@@ -175,32 +176,7 @@ const Equipamentos = () => {
     )
   }
 
-  const currentInstallationDateTemplate = (rowData) => {
-    if (rowData.currentInstallationDate) {
-      const date = new Date(rowData.currentInstallationDate)
-      return (
-        date.toLocaleDateString('pt-BR')
-      )
-    }
-  }
-
-  const nextManutentionDateTemplate = (rowData) => {
-    if (rowData.nextManutentionDate) {
-      const date = new Date(rowData.nextManutentionDate)
-      return (
-        date.toLocaleDateString('pt-BR')
-      )
-    }
-  }
-
-  const lastManutentionDateTemplate = (rowData) => {
-    if (rowData.lastManutentionDate) {
-      const date = new Date(rowData.lastManutentionDate)
-      return (
-        date.toLocaleDateString('pt-BR')
-      )
-    }
-  }
+  
 
   useEffect(() => {
     listEquipments()
@@ -233,9 +209,9 @@ const Equipamentos = () => {
         >
           <Column field="name" sortable header="Equipamento"></Column>
           <Column field="location" sortable header="Localização"></Column>
-          <Column field="currentInstallationDate" sortable header="Dt. Instalação" body={currentInstallationDateTemplate}></Column>
-          <Column field="lastManutentionDate" sortable header="Ult. Manutenção" body={lastManutentionDateTemplate}></Column>
-          <Column field="nextManutentionDate" sortable header="Próx. Manutenção" body={nextManutentionDateTemplate}></Column>
+          <Column field="currentInstallationDate" sortable header="Dt. Instalação" body={dateValidator.currentInstallationDateTemplate}></Column>
+          <Column field="lastManutentionDate" sortable header="Ult. Manutenção" body={dateValidator.lastManutentionDateTemplate}></Column>
+          <Column field="nextManutentionDate" sortable header="Próx. Manutenção" body={dateValidator.nextManutentionDateTemplate}></Column>
           <Column field="active" header="Status" sortable body={statusTemplate}></Column>
           <Column header="Ações" body={acoesTemplate}></Column>
         </DataTable>

@@ -1,48 +1,30 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Card } from 'primereact/card';
+import { dateValidator } from '../../../validators/date-validator';
 
-export default function DashboardDataTable() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    setProducts([
-      {
-        code: 1,
-        name: 'Manut 1',
-        category: 'Cate',
-        quantity: 10
-      },
-      {
-        code: 2,
-        name: 'Manut 1',
-        category: 'Cate',
-        quantity: 10
-      },
-      {
-        code: 3,
-        name: 'Manut 1',
-        category: 'Cate',
-        quantity: 10
-      },
-      {
-        code: 4,
-        name: 'Manut 1',
-        category: 'Cate',
-        quantity: 10
-      },
-    ])
-  }, []);
-
+export default function DashboardDataTable({ loading, equipaments }) {
+  
   return (
     <Card className="m-2">
-      <DataTable value={products} tableStyle={{ minWidth: '45rem' }} header={'Próximas manutenções'}>
-        <Column field="code" header="Code"></Column>
-        <Column field="name" header="Name"></Column>
-        <Column field="category" header="Category"></Column>
-        <Column field="quantity" header="Quantity"></Column>
-      </DataTable>
+      <DataTable
+          value={equipaments}
+          paginator
+          size='small'
+          rows={5}
+          dataKey='id'
+          header={'Lista de Manutenções'}
+          loading={loading}
+          globalFilterFields={['name', 'location', 'active']}
+          emptyMessage='Nenhum resultado econtrado!'
+          sortField='nextManutentionDate'                     
+        >
+          <Column field="name" sortable header="Equipamento"></Column>
+          <Column field="location" sortable header="Localização"></Column>
+          <Column field="nextManutentionDate" sortable header="Próx. Manutenção" body={dateValidator.nextManutentionDateTemplate}></Column>                    
+          <Column field="status" sortable header="Status"></Column>
+        </DataTable>
     </Card>
   );
 }

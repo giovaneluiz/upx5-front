@@ -42,7 +42,7 @@ const Manutencoes = () => {
       <Toast ref={toastRef} />
       <DashboarCard loading={loading} equipaments={equipaments}/>
       <div className="flex">
-        <DashboardDataTable loading={loading} equipaments={equipaments}/>
+        <DashboardDataTable loading={loading} equipaments={equipaments} toastRef={toastRef}/>
         <DashboardCharts loading={loading} equipaments={equipaments}/>
       </div>
     </>
