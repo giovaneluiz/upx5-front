@@ -84,7 +84,7 @@ export const updateEquipament = async (equipment) => {
 
 export const updateStatusEquipment = async (equipment) => {
   try {
-    const res = await axios.put(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
+    const res = await axios.patch(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
       name: equipment.name,
       description: equipment.description,
       lastManutentionDate: equipment.lastManutentionDate,
