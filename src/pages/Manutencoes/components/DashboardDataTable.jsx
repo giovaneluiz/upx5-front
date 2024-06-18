@@ -37,7 +37,7 @@ export default function DashboardDataTable() {
 
   return (
     <Card className="m-2">
-      <DataTable value={products} tableStyle={{ minWidth: '45rem' }}>
+      <DataTable value={products} tableStyle={{ minWidth: '45rem' }} header={'Próximas manutenções'}>
         <Column field="code" header="Code"></Column>
         <Column field="name" header="Name"></Column>
         <Column field="category" header="Category"></Column>

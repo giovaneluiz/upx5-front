@@ -45,13 +45,13 @@ const Equipamentos = () => {
   }
 
   const accept = async (rowData) => {
-    setLoading(true)    
     const res = await updateStatusEquipment(rowData)
     if (!res) {
       toastRef.current.show({ severity: 'error', summary: 'Erro ao atualizar cadastro!', life: 3000 })
       return
     }
-    await listEquipments()    
+    setLoading(true)
+    await listEquipments()
     toastRef.current.show({ severity: 'info', summary: 'Confirmado', life: 3000 })
   }
 
@@ -73,7 +73,7 @@ const Equipamentos = () => {
     })
   }
 
-  const confirm2 = (rowData) => {    
+  const confirm2 = (rowData) => {
     confirmDialog({
       message: `Tem certeza que deseja desativar o equipamento **${rowData.name}**?`,
       header: 'Confirmação de Bloqueio',

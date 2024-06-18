@@ -18,6 +18,7 @@ const defaultEquipment = {
 // eslint-disable-next-line react/prop-types
 const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
   const [newEquipament, setNewEquipament] = useState(defaultEquipment)
+  const [loading, setLoading] = useState(false)
   const msgRef = useRef(null)
 
   const handleChange = (e) => {
@@ -42,8 +43,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-
+    e.preventDefault()    
     if (newEquipament.name === '') {
       showFieldError('Nome')
       return
@@ -58,7 +58,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
       showFieldError('Localização')
       return
     }
-
+    setLoading(true)
     const equipment = await insertEquipament(newEquipament)
     if (!equipment) {
       showMessage('error')
@@ -66,6 +66,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
     }
     showMessage('success')
     setVisible(false)
+    setLoading(false)
     setNewEquipament(defaultEquipment)
     load()
   }
@@ -111,7 +112,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
         </div>
         <span className='mt-2'>(*) campos obrigatórios</span>
         <div className='mt-5'>
-          <Button label='Salvar' severity='primary' className='mr-2' type='submit' />
+          <Button label='Salvar' severity='primary' className='mr-2' type='submit' loading={loading}/>
           <Button label='Cancelar' type='button' severity='secondary' text onClick={() => setVisible(false)} />
         </div>
       </form>
