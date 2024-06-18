@@ -13,6 +13,7 @@ const defaultEquipment = {
   currentInstallationDate: '',
   location: '',
   serialNumber: '',
+  description: ''
 }
 
 // eslint-disable-next-line react/prop-types
@@ -44,6 +45,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()    
+    console.log(newEquipament)
     if (newEquipament.name === '') {
       showFieldError('Nome')
       return
@@ -62,6 +64,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
     const equipment = await insertEquipament(newEquipament)
     if (!equipment) {
       showMessage('error')
+      setLoading(false)
       return
     }
     showMessage('success')
@@ -107,7 +110,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
           </div>
           <div className='flex flex-column gap-2 mt-3'>
             <label htmlFor="descricao">Outras Informações</label>
-            <InputTextarea id="descricao" aria-describedby="nome" rows={2} value={newEquipament.description} name='description' onChange={handleChange} />
+            <InputTextarea id="description" aria-describedby="nome" rows={2} value={newEquipament.description} name='description' onChange={handleChange} />
           </div>
         </div>
         <span className='mt-2'>(*) campos obrigatórios</span>

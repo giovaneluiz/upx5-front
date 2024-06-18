@@ -1,47 +1,49 @@
-import { Button } from "primereact/button"
+/* eslint-disable react/prop-types */
 import { Card } from "primereact/card"
+import { useEffect } from "react"
 
-export const DashboarCard = () => {
-  const cardFooter = (severity) => (
-    <>
-      <Button
-        label="Ver todos"
-        icon="pi pi-arrow-right"
-        iconPos="right"
-        outlined
-        severity={severity}
-        size="small" />
-    </>
-  )
+// eslint-disable-next-line react/prop-types
+export const DashboarCard = ({ loading, equipaments }) => {
+  
+  useEffect(() => {
+    localStorage.setItem('equipData', JSON.stringify(equipaments))
+    console.log(equipaments[0], new Date().toLocaleDateString())
+  }, [equipaments])  
+  
+  const curret = equipaments.filter(equip => equip.status === 'Em andamento' )
+  const next = equipaments.filter(equip => equip.status === 'Agendada')
+  const delaying = equipaments.filter(equip => new Date(equip.nextManutentionDate).toLocaleDateString() <= new Date().toLocaleDateString())
 
   return (
-    <>      
-      <div className="flex flex-column sm:flex-row">
-        <Card
-          className="border-left-3 border-green-500 m-2 w-full"
-          title={654}
-          subTitle='Executadas'
-          footer={cardFooter('success', 2)}
-        />
-        <Card
-          className="border-left-3 border-blue-500 m-2 w-full	"
-          title={5}
-          subTitle='Em andamento'
-          footer={cardFooter('primary', 3)}
-        />
-        <Card
-          className="border-left-3 border-orange-500 m-2 w-full	"
-          title={12}
-          subTitle='Próximos 7 dias'
-          footer={cardFooter('warning', 3)}
-        />
-        <Card
-          className="border-left-3 border-red-500 m-2 w-full	"
-          title={2}
-          subTitle='Atrasadas'
-          footer={cardFooter('danger', 3)}
-        />
-      </div>
+    <>
+      {loading === true ? (
+        <h1>Carregando...</h1>
+      ) : (
+        <>
+          <div className="flex flex-column sm:flex-row">
+            <Card
+              className="border-left-3 border-green-500 m-2 w-full"
+              title={equipaments.length}
+              subTitle='Executadas'              
+            />
+            <Card
+              className="border-left-3 border-blue-500 m-2 w-full	"
+              title={curret.length}
+              subTitle='Em andamento'              
+            />
+            <Card
+              className="border-left-3 border-orange-500 m-2 w-full	"
+              title={next.length}
+              subTitle='Agendadas'              
+            />
+            <Card
+              className="border-left-3 border-red-500 m-2 w-full	"
+              title={delaying.length}
+              subTitle='Atrasadas'              
+            />
+          </div>
+        </>
+      )}
     </>
   )
 }

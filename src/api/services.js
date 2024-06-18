@@ -40,16 +40,16 @@ export const getEquipments = async () => {
   }
 }
 
-export const insertEquipament = async (equipment) => {
-  console.log(equipment)
+export const insertEquipament = async (equipment) => {  
   try {
     const res = await axios.post(`${env.BASE_URL_UPX5}/equipment`, {
       name: equipment.name,
-      status: true,
+      active: true,
       nextManutentionDate: new Date(equipment.nextManutentionDate),
       currentInstallationDate: new Date(equipment.currentInstallationDate),
       location: equipment.location,
-      serialNumber: equipment.serialNumber
+      serialNumber: equipment.serialNumber,
+      description: equipment.description
     })
     if (res) {
       return res.status === 201 ? res.data : null
@@ -62,7 +62,7 @@ export const insertEquipament = async (equipment) => {
 
 export const updateEquipament = async (equipment) => {
   try {
-    const res = await axios.put(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
+    const res = await axios.patch(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
       name: equipment.name,
       description: equipment.description,
       lastManutentionDate: equipment.lastManutentionDate,
@@ -86,13 +86,13 @@ export const updateStatusEquipment = async (equipment) => {
   try {
     const res = await axios.patch(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
       name: equipment.name,
-      description: equipment.description,
       lastManutentionDate: equipment.lastManutentionDate,
       nextManutentionDate: new Date(equipment.nextManutentionDate),
       currentInstallationDate: new Date(equipment.currentInstallationDate),
       location: equipment.location,
       serialNumber: equipment.serialNumber,
-      status: equipment.status === false ? true : false
+      description: equipment.description,
+      active: equipment.status === false ? true : false,      
     })
     if (res) {
       return res.status === 200 ? res.data : null

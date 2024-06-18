@@ -146,13 +146,13 @@ const Equipamentos = () => {
           />
         </Link>
         <Button
-          icon={rowData.status ? 'pi pi-ban' : 'pi pi-replay'}
-          severity={rowData.status ? 'danger' : 'secondary'}
+          icon={rowData.active ? 'pi pi-ban' : 'pi pi-replay'}
+          severity={rowData.active ? 'danger' : 'secondary'}
           rounded
           text
-          tooltip={rowData.status ? 'Desativar' : 'Ativar'}
+          tooltip={rowData.active ? 'Desativar' : 'Ativar'}
           onClick={() => {
-            if (rowData.status) {
+            if (rowData.active) {
               confirm2(rowData)
             } else {
               confirm1(rowData)
@@ -166,7 +166,7 @@ const Equipamentos = () => {
   const statusTemplate = (rowData) => {
     return (
       <>
-        {rowData.status ? (
+        {rowData.active ? (
           <Tag value='Ativo' severity='success' icon={'pi pi-check'} />
         ) : (
           <Tag value='Inativo' severity='danger' icon={'pi pi-ban'} />
@@ -226,17 +226,17 @@ const Equipamentos = () => {
           header={headerTable}
           filters={filters}
           loading={loading}
-          globalFilterFields={['name', 'location', 'status']}
+          globalFilterFields={['name', 'location', 'active']}
           emptyMessage='Nenhum resultado econtrado!'
           sortField='current_at'
-          sortOrder={-1}
+          sortOrder={-1}            
         >
           <Column field="name" sortable header="Equipamento"></Column>
           <Column field="location" sortable header="Localização"></Column>
           <Column field="currentInstallationDate" sortable header="Dt. Instalação" body={currentInstallationDateTemplate}></Column>
           <Column field="lastManutentionDate" sortable header="Ult. Manutenção" body={lastManutentionDateTemplate}></Column>
           <Column field="nextManutentionDate" sortable header="Próx. Manutenção" body={nextManutentionDateTemplate}></Column>
-          <Column field="status" header="Status" sortable body={statusTemplate}></Column>
+          <Column field="active" header="Status" sortable body={statusTemplate}></Column>
           <Column header="Ações" body={acoesTemplate}></Column>
         </DataTable>
       </div>
