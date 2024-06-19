@@ -11,8 +11,7 @@ const EditaEquipamento = ({ showMessage, visible, setVisible, equipData, load })
   const [equipment, setEquipment] = useState({})
   const msgRef = useRef(null)
 
-  useEffect(() => {
-    console.log(equipData)
+  useEffect(() => {    
     setEquipment(equipData)
   }, [equipData])
 

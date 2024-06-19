@@ -105,7 +105,8 @@ export const updateActiveEquipment = async (equipment) => {
       serialNumber: equipment.serialNumber,
       description: equipment.description,
       active: equipment.status === false ? true : false,      
-      maintenanceCount: equipment.maintenanceCount
+      status: equipment.status,
+      maintenanceCount: equipment.maintenanceCount,
     })
     if (res) {
       return res.status === 200 ? res.data : null
