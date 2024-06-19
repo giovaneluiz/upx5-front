@@ -40,6 +40,17 @@ export const getEquipments = async () => {
   }
 }
 
+export const getEquipmentById = async (equipmentId) => {
+  try {
+    const res = await axios.get(`${env.BASE_URL_UPX5}/equipment/${equipmentId}`)
+    if (res) {
+      return res.status === 200 ? res.data.equipment : null
+    }
+  } catch (error) {
+    return null
+  }
+}
+
 export const insertEquipament = async (equipment) => {  
   try {
     const res = await axios.post(`${env.BASE_URL_UPX5}/equipment`, {
@@ -70,7 +81,9 @@ export const updateEquipament = async (equipment) => {
       currentInstallationDate: new Date(equipment.currentInstallationDate),
       location: equipment.location,
       serialNumber: equipment.serialNumber,
-      status: equipment.status
+      status: equipment.status,
+      active: equipment.active,
+      maintenanceCount: Number(equipment.maintenanceCount)
     })
     if (res) {
       return res.status === 200 ? res.data : null
@@ -81,8 +94,7 @@ export const updateEquipament = async (equipment) => {
   }
 }
 
-
-export const updateStatusEquipment = async (equipment) => {
+export const updateActiveEquipment = async (equipment) => {
   try {
     const res = await axios.patch(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
       name: equipment.name,
@@ -93,7 +105,32 @@ export const updateStatusEquipment = async (equipment) => {
       serialNumber: equipment.serialNumber,
       description: equipment.description,
       active: equipment.status === false ? true : false,      
+      maintenanceCount: equipment.maintenanceCount
     })
+    if (res) {
+      return res.status === 200 ? res.data : null
+    }
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const updateMaintenance = async (equipment) => {  
+  try {  
+    const res = await axios.patch(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
+      name: equipment.name,
+      description: equipment.description,
+      lastManutentionDate: new Date(equipment.lastManutentionDate),
+      nextManutentionDate: new Date(equipment.nextManutentionDate),
+      currentInstallationDate: new Date(equipment.currentInstallationDate),
+      location: equipment.location,
+      serialNumber: equipment.serialNumber,
+      status: equipment.status.name,
+      active: equipment.active,
+      maintenanceCount: equipment.maintenanceCount + 1,
+    })
+    console.log(res.data)
     if (res) {
       return res.status === 200 ? res.data : null
     }

@@ -79,7 +79,7 @@ const EditaEquipamento = ({ showMessage, visible, setVisible, equipData, load })
   }
 
   return (
-    <Dialog header="Edita Equipamento" visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
+    <Dialog header={'Edita Equipamento'} visible={visible} style={{ width: '70vw' }} onHide={() => setVisible(false)}>
       <Messages ref={msgRef} />
       <form onSubmit={(e) => handleSubmit(e)} >
         <div className='flex flex-column'>
@@ -88,6 +88,10 @@ const EditaEquipamento = ({ showMessage, visible, setVisible, equipData, load })
             <InputText id="nome" aria-describedby="nome" value={equipment.name} onChange={e => handleChange(e)} name='name' />
           </div>
           <div className='flex gap-2 mt-3'>
+            <div className='flex flex-column gap-2'>
+              <label htmlFor="maintenanceCount">Qtd. Manutenções</label>
+              <InputText id="maintenanceCount" aria-describedby="maintenanceCount" type='number' value={equipment.maintenanceCount} name='maintenanceCount' onChange={handleChange} />
+            </div>
             <div className='flex flex-column gap-2'>
               <label htmlFor="serviceTag">Service Tag</label>
               <InputText id="serviceTag" aria-describedby="serviceTag" type='text' value={equipment.serialNumber} name='serialNumber' onChange={handleChange} />

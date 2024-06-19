@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 import NovoEquipamento from './NovoEquipamento'
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 import EditaEquipamento from './EditaEquipamento'
-import { getEquipments, updateStatusEquipment } from '../../../api/services'
+import { getEquipments, updateActiveEquipment } from '../../../api/services'
 import { dateValidator } from '../../../validators/date-validator'
 
 const Equipamentos = () => {
@@ -46,7 +46,7 @@ const Equipamentos = () => {
   }
 
   const accept = async (rowData) => {
-    const res = await updateStatusEquipment(rowData)
+    const res = await updateActiveEquipment(rowData)
     if (!res) {
       toastRef.current.show({ severity: 'error', summary: 'Erro ao atualizar cadastro!', life: 3000 })
       return
