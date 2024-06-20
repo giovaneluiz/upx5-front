@@ -31,9 +31,13 @@ const router = createBrowserRouter([
   }
 ])
 
+const value = {
+  cssTransition: false
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <PrimeReactProvider>
+    <PrimeReactProvider value={value}>
       <RouterProvider router={router} />
     </PrimeReactProvider>
   </React.StrictMode>
