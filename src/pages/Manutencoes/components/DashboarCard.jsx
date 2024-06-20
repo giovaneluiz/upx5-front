@@ -6,8 +6,7 @@ import { useEffect } from "react"
 export const DashboarCard = ({ loading, equipaments }) => {
   
   useEffect(() => {
-    localStorage.setItem('equipData', JSON.stringify(equipaments))
-    console.log(equipaments[0], new Date().toLocaleDateString())
+    localStorage.setItem('equipData', JSON.stringify(equipaments))    
   }, [equipaments])  
   
   const curret = equipaments.filter(equip => equip.status === 'Em Andamento' )

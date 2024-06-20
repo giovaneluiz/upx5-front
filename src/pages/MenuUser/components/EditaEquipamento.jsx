@@ -11,8 +11,7 @@ const EditaEquipamento = ({ showMessage, visible, setVisible, equipData, load })
   const [equipment, setEquipment] = useState({})
   const msgRef = useRef(null)
 
-  useEffect(() => {    
-    console.log(equipData)
+  useEffect(() => {        
     setEquipment(equipData)
   }, [equipData])
 
@@ -25,8 +24,7 @@ const EditaEquipamento = ({ showMessage, visible, setVisible, equipData, load })
 
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value)
-    selectedDate.setDate(selectedDate.getDate() + 180)
-    console.log(selectedDate.toISOString())
+    selectedDate.setDate(selectedDate.getDate() + 180)    
     setEquipment({
       ...equipment,
       currentInstallationDate: e.target.value,

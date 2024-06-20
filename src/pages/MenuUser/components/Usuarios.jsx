@@ -194,8 +194,7 @@ const Users = () => {
   }
 
   const insertData = async () => {
-    const user = await insertUser(userData)
-    console.log(user)
+    const user = await insertUser(userData)    
     if (!user) {
       showMessage('error')
       return

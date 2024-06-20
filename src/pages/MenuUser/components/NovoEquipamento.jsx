@@ -44,8 +44,7 @@ const NovoEquipamento = ({ showMessage, visible, setVisible, load }) => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()    
-    console.log(newEquipament)
+    e.preventDefault()        
     if (newEquipament.name === '') {
       showFieldError('Nome')
       return

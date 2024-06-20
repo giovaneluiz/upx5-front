@@ -121,7 +121,7 @@ const Equipamentos = () => {
   })
 
   const showEditDialog = (id) => {
-    const resEquipmentData = equipaments.filter((equip) => equip.id === id)
+    const resEquipmentData = equipaments.filter((equip) => equip.id === id)    
     setEquipmentEdit(resEquipmentData[0])
     setEdit(true)
   }
