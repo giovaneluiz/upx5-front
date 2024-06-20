@@ -17,8 +17,8 @@ export const dateValidator = {
     }
   },
 
-  lastManutentionDateTemplate(rowData) {
-    if (rowData.lastManutentionDate) {
+  lastManutentionDateTemplate(rowData) {    
+    if (rowData.lastManutentionDate !== '1970-01-01T00:00:00.000Z') {
       const date = new Date(rowData.lastManutentionDate)
       return (
         date.toLocaleDateString('pt-BR')
