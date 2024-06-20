@@ -12,6 +12,7 @@ const EditaEquipamento = ({ showMessage, visible, setVisible, equipData, load })
   const msgRef = useRef(null)
 
   useEffect(() => {    
+    console.log(equipData)
     setEquipment(equipData)
   }, [equipData])
 
