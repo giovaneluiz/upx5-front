@@ -10,9 +10,9 @@ export const DashboarCard = ({ loading, equipaments }) => {
     console.log(equipaments[0], new Date().toLocaleDateString())
   }, [equipaments])  
   
-  const curret = equipaments.filter(equip => equip.status === 'Em andamento' )
+  const curret = equipaments.filter(equip => equip.status === 'Em Andamento' )
   const next = equipaments.filter(equip => equip.status === 'Agendada')
-  const delaying = equipaments.filter(equip => new Date(equip.nextManutentionDate).toLocaleDateString() <= new Date().toLocaleDateString())
+  const delaying = equipaments.filter(equip => equip.status === 'Em Atraso')
 
   return (
     <>
