@@ -7,7 +7,7 @@ const PrintQrCode = () => {
 
   return (
     <>
-      <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=http://192.168.2.102:5173/manutencao/${uuid}`} />
+      <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=https://projeto-upx5.netlify.app/manutencao/${uuid}`} />
     </>
   )
 }

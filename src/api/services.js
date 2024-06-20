@@ -94,7 +94,7 @@ export const updateEquipament = async (equipment) => {
   }
 }
 
-export const updateActiveEquipment = async (equipment) => {  
+export const updateActiveEquipment = async (equipment) => {    
   try {
     const res = await axios.patch(`${env.BASE_URL_UPX5}/equipment/${equipment.id}`, {
       name: equipment.name,
@@ -105,7 +105,7 @@ export const updateActiveEquipment = async (equipment) => {
       location: equipment.location,
       serialNumber: equipment.serialNumber,
       status: equipment.status,
-      active: equipment.active,
+      active: equipment.active ? false : true,
       maintenanceCount: equipment.maintenanceCount,
     })
     if (res) {
