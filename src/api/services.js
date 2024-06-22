@@ -29,6 +29,24 @@ export const insertUser = async (user) => {
   }
 }
 
+export const updateActiveUser = async (user) => {
+  
+  try {
+    const res = await axios.post(`${env.BASE_URL_UPX5}/register`, {
+      name: user.name,
+      CPF: user.CPF,      
+      status: user.status,
+      userCPF: user.CPF
+    })
+    if (res) {
+      return res.status === 201 ? res.data : null
+    }
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
 export const getEquipments = async () => {
   try {
     const res = await axios.get(`${env.BASE_URL_UPX5}/equipment`)

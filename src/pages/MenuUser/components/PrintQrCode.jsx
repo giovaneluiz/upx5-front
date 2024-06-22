@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom"
 
 const PrintQrCode = () => {
   const { uuid } = useParams()
-  print()
 
   return (
     <>
